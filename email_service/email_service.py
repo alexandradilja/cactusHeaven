@@ -7,7 +7,9 @@ channel = connection.channel()
 exchange_name = 'order_exchange'
 create_order_routing_key = 'create_order'
 email_queue_name = 'email_queue'
-email_template = '<h2>Thank you for ordering @ Cactus heaven!</h2><p>We hope you will enjoy our lovely product and don\'t hesitate to contact us if there are any questions.</p><table><thead><tr style="background-color: rgba(155, 155, 155, .2)"><th>Description</th><th>Unit price</th><th>Quantity</th><th>Row price</th></tr></thead><tbody>%s</tbody></table>'
+email_template = '''<h2>Thank you for ordering @ Cactus heaven!</h2><p>We hope you will enjoy our lovely product and don\'t
+hesitate to contact us if there are any questions.</p><table><thead><tr style="background-color: rgba(155, 155, 155, .2)">
+<th>Description</th><th>Unit price</th><th>Quantity</th><th>Row price</th></tr></thead><tbody>%s</tbody></table>'''
 
 # Declare the exchange, if it doesn't exist
 channel.exchange_declare(exchange=exchange_name,
@@ -34,7 +36,11 @@ def send_order_email(ch, method, properties, data):
     email = parsed_msg['email']
     items = parsed_msg['items']
     items_html = ''.join(['<tr><td>%s</td><td>%d</td><td>%d</td><td>%d</td></tr>' % (item['description'],
-                                                                                     item['unitPrice'], item['quantity'], int(item['quantity']) * int(item['unitPrice'])) for item in items])
+                                                                                     item['unitPrice'], item['quantity'],
+                                                                                     int(
+                                                                                         item['quantity'])
+                                                                                     * int(item['unitPrice']))
+                          for item in items])
     representation = email_template % items_html
     send_simple_message(parsed_msg['email'],
                         'Successful order!', representation)
