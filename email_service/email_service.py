@@ -23,7 +23,7 @@ channel.queue_bind(exchange=exchange_name, queue=email_queue_name,
 
 def send_simple_message(to, subject, body):
     return requests.post(
-        "https://api.mailgun.net/v3/sandboxdebad1becf7b43b28b6b79e1414fad5f.mailgun.org"/messages",
+        "https://api.mailgun.net/v3/sandboxdebad1becf7b43b28b6b79e1414fad5f.mailgun.org/messages",
         auth=("api", "73680267ea5975868bd8d712a8d17aed-53c13666-813291a4"),
         data={"from": "Mailgun Sandbox <postmaster@sandboxdebad1becf7b43b28b6b79e1414fad5f.mailgun.org>",
               "to": to,
@@ -46,9 +46,7 @@ def send_order_email(ch, method, properties, data):
                         'Successful order!', representation)
 
 
-channel.basic_consume(send_order_email,
-                      queue=email_queue_name,
-                      no_ack=True)
+channel.basic_consume(send_order_email, queue=email_queue_name, no_ack=True)
 
 channel.start_consuming()
 connection.close()
